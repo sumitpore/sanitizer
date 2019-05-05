@@ -10,7 +10,7 @@ class ArrayDot
      * @param array $array Array to be checked
      * @return boolean
      */
-    public static function isMultiDimensionalArray(array $array): bool
+    public static function isMultiDimensionalArray($array)
     {
         rsort($array);
         return isset($array[0]) && is_array($array[0]);
@@ -23,7 +23,7 @@ class ArrayDot
      * @param  array  $array
      * @return array
      */
-    public static function collapse($array): array
+    public static function collapse($array)
     {
         if (!static::isMultiDimensionalArray($array)) {
             return $array;
@@ -48,7 +48,7 @@ class ArrayDot
      * @param string $prefix Prefix to be applied on found keys
      * @return array
      */
-    public static function resolveWildcardKey(array $array, $key = null, string $prefix = ''): array
+    public static function resolveWildcardKey($array, $key = null, $prefix = '')
     {
         $prefixSegments = [];
 
