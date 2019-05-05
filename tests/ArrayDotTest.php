@@ -60,7 +60,7 @@ class ArrayDotTest extends PHPUnit_Framework_TestCase
                 ]
             ]
         ];
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->setExpectedException('InvalidArgumentException', 'Key can not end with `.`');
         ArrayDot::resolveWildcardKey($array, 'a.id.');
     }
 
