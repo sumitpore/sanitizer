@@ -9,6 +9,50 @@ class SanitizerTest extends PHPUnit_Framework_TestCase
         $s = new Sanitizer;
     }
 
+    public function testThatSanitizerCanSanitizeWildcardRules()
+    {
+        $s = new Sanitizer;
+        $s->register('reverse', function($field) { return strrev($field); });
+
+        $d = [
+            'users' =>[
+                [
+                    'id' => 123,
+                    'name' => 'Sumit',
+                ],
+                [
+                    'id' => 456,
+                    'name' => 'David',
+                    'company' => 'abc'
+                ]
+            ]
+        ];
+
+        $s->sanitize([
+            'users.*.name' => 'reverse',
+            'users.*.id' => 'reverse',
+            '*.*.company' => 'strtoupper'
+        ], $d);
+        
+
+        $this->assertEquals(
+            $d, 
+            [
+                'users' =>[
+                    [
+                        'id' => 321,
+                        'name' => 'timuS',
+                    ],
+                    [
+                        'id' => 654,
+                        'name' => 'divaD',
+                        'company' => 'ABC'
+                    ]
+                ]
+            ]
+        );
+    }
+
     public function testThatSanitizerCanSanitizeWithClosure()
     {
         $s = new Sanitizer;

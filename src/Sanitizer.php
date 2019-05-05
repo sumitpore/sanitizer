@@ -64,10 +64,11 @@ class Sanitizer
         // Process global sanitizers.
         $this->runGlobalSanitizers($rules, $data);
 
-        $availableRules = array_only($rules, array_keys($data));
+        // Rules which contain wildcards need to be resolved to find out actual keys 
+        $this->resolveWildcardRules($rules, $data);
 
         // Iterate rules to be applied.
-        foreach ($availableRules as $field => $ruleset) {
+        foreach ($rules as $field => $ruleset) {
 
             // Execute sanitizers over a specific field.
             $this->sanitizeField($data, $field, $ruleset);
@@ -117,6 +118,24 @@ class Sanitizer
         }
     }
 
+    protected function resolveWildcardRules(&$rules, $data)
+    {
+        $resolvedRules = [];
+
+        foreach( $rules as $field => $ruleset ){
+
+            // If it is a wildcard rule
+            if( strpos($field, '.*') !== false ){
+                $resolvedRules[] = array_fill_keys(ArrayDot::resolveWildcardKey($data, $field), $ruleset);
+                unset($rules[$field]);
+            }
+
+        }
+
+        $resolvedRules = array_collapse($resolvedRules);
+        $rules = array_merge($resolvedRules, $rules);
+    }
+
     /**
      * Execute sanitization over a specific field.
      *
@@ -130,6 +149,11 @@ class Sanitizer
         // If we have a piped ruleset, explode it.
         if (is_string($ruleset)) {
             $ruleset = explode('|', $ruleset);
+        }
+
+        // If the field exist in the data, then only santizer should run
+        if(!array_has($data, $field)){
+            return;
         }
 
         // Get value from data array.
