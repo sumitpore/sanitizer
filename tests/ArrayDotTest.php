@@ -4,7 +4,8 @@ use Rees\Sanitizer\ArrayDot;
 class ArrayDotTest extends PHPUnit_Framework_TestCase
 {
 
-    public function testThatIsMultiDimensionalArrayMethodCanCheckIfArrayIsMultiDimensional(){
+    public function testThatIsMultiDimensionalArrayMethodCanCheckIfArrayIsMultiDimensional()
+    {
         $array = [
             'foo' => [
                 'bar' => [
@@ -30,17 +31,19 @@ class ArrayDotTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(ArrayDot::isMultiDimensionalArray($array));
     }
 
-    public function testThatCollapseMethodCanConvertCollectionOfArraysToSingleFlatArray(){
+    public function testThatCollapseMethodCanConvertCollectionOfArraysToSingleFlatArray()
+    {
         $array = [
-            [1, 2, 3], 
-            [4, 5, 6], 
+            [1, 2, 3],
+            [4, 5, 6],
             [7, 8, 9]
         ];
 
         $this->assertEquals(ArrayDot::collapse($array), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
     }
 
-    public function testThatResolveWildCardKeyThrowsExceptionIfKeyEndsWithDot(){
+    public function testThatResolveWildCardKeyThrowsExceptionIfKeyEndsWithDot()
+    {
         $array = [
             'users' => [
                 'subscribers' => [
@@ -61,7 +64,8 @@ class ArrayDotTest extends PHPUnit_Framework_TestCase
         ArrayDot::resolveWildcardKey($array, 'a.id.');
     }
 
-    public function testThatResolveWildCardKeyCanFindAllPossibleKeys(){
+    public function testThatResolveWildCardKeyCanFindAllPossibleKeys()
+    {
         
         $array = [
             'users' => [
@@ -130,7 +134,5 @@ class ArrayDotTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(ArrayDot::resolveWildcardKey($array, '*.*.sumit'), [
             'users.subscribers.sumit',
         ]);
-
     }
-
 }
