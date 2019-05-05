@@ -14,9 +14,12 @@ Sanitizers can be used to standardize data to ease validation, or provide data c
 First construct a rules array.
 
     $rules = [
-        'name'      => 'trim',
-        'email'     => 'trim|strtolower'
+        'number_of_users' => 'trim|intval',
+        'users.*.name'      => 'trim',
+        'users.*.email'     => 'trim|strtolower',
+        'users.*.company_info.company_name' => 'trim|strtoupper'
     ];
+
 
 Rules can contain either callable functions, or the name of a sanitizer binding (more later). You can use either a pipe `|` or an array to specify multiple sanitization rules.
 
@@ -29,14 +32,32 @@ Here's a full example.
 
     // Construct rules array.
     $rules = [
-        'name'      => 'trim',
-        'email'     => 'trim|strtolower'
+        'number_of_users' => 'trim|intval',
+        'users.*.name'      => 'trim',
+        'users.*.email'     => 'trim|strtolower',
+        'users.*.company_info.company_name' => 'trim|strtoupper'
     ];
+
 
     // Data array to be sanitized.
     $data = [
-        'name' => ' Dayle ',
-        'email' => ' me@DAYLEREES.com'
+        'number_of_users' => 2.1,
+        'users' => [
+            [
+                'name' => ' Dayle ',
+                'email' => ' me@DAYLEREES.com',
+                'company_info' => [
+                    'company_name' => 'test company'
+                ]
+            ],
+            [
+                'name' => ' Tony ',
+                'email' => ' me@AveNgers.com',
+                'company_info' => [
+                    'company_name' => 's.h.i.e.l.d'
+                ]
+            ],
+        ]
     ];
 
     // Construct a new sanitizer.
@@ -46,12 +67,37 @@ Here's a full example.
     $sanitizer->sanitize($rules, $data);
 
 Here's the content of `$data` after execution.
+```
+[
+    [number_of_users] => 2
+    [users] => Array
+        (
+            [0] => Array
+                (
+                    [name] => Dayle
+                    [email] => me@daylerees.com
+                    [company_info] => Array
+                        (
+                            [company_name] => TEST COMPANY
+                        )
 
-    [
-        'name' => 'Dayle',
-        'email' => 'me@daylerees.com'
-    ]
+                )
 
+            [1] => Array
+                (
+                    [name] => Tony
+                    [email] => me@avengers.com
+                    [company_info] => Array
+                        (
+                            [company_name] => S.H.I.E.L.D
+                        )
+
+                )
+
+        )
+
+]
+```
 Using the Laravel facade, the syntax can be made a little cleaner.
 
     Sanitizer::sanitize($rules, $data);
