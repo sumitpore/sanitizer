@@ -65,7 +65,7 @@ class Sanitizer
         $this->runGlobalSanitizers($rules, $data);
 
         // Rules which contain wildcards need to be resolved to find out actual keys 
-        $this->resolveWildcardRules($rules, $data);
+        $rules = $this->resolveWildcardRules($rules, $data);
 
         // Iterate rules to be applied.
         foreach ($rules as $field => $ruleset) {
@@ -118,11 +118,18 @@ class Sanitizer
         }
     }
 
-    protected function resolveWildcardRules(&$rules, $data)
+    /**
+     * Expand/Resolve wildcard rules to individual rules
+     *
+     * @param array $rules
+     * @param array $data
+     * @return array
+     */
+    public function resolveWildcardRules($rules, $data)
     {
         $resolvedRules = [];
 
-        foreach( $rules as $field => $ruleset ){
+        foreach ($rules as $field => $ruleset){
 
             // If it is a wildcard rule
             if( strpos($field, '.*') !== false ){
@@ -133,7 +140,7 @@ class Sanitizer
         }
 
         $resolvedRules = array_collapse($resolvedRules);
-        $rules = array_merge($resolvedRules, $rules);
+        return array_merge($resolvedRules, $rules); 
     }
 
     /**
